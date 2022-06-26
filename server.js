@@ -32,6 +32,6 @@ app.get('/starwars/getall', getAllChars);
 app.get('/starwars/getfiltered', authMiddleware, getFiltered);
 
 app.post('/register', registerHandler(conn));
-app.post('/login', loginHandler);
+app.post('/login', loginHandler(conn));
 
 app.listen(PORT, () => console.log('Your app is running at port ' + PORT));

@@ -28,4 +28,7 @@ const getUser = async (conn, email) => {
 const addUser = async (conn, email, pw) =>
   await conn.query(`INSERT INTO users (email, password) VALUES ('${email}', '${hash(pw)}')`);
 
-export {addUser, createDB, createPool, getUser}
+const addToken = async (conn, email, token) =>
+  await conn.query(`UPDATE users SET token = '${token}' WHERE email = '${email}'`)
+
+export {addUser, addToken, createDB, createPool, getUser}
