@@ -1,0 +1,1 @@
+CREATE TABLE users (email varchar(50), password varchar(255), token varchar(255))
