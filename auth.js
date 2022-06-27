@@ -7,9 +7,9 @@ const hash = pw => createHash('sha256').update(pw).digest('hex');
 const authMiddleware = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) return res.sendStatus(401);
-  jwt.verify(token, process.env.ACCESS_TOKEN, (err, data) => {
+  jwt.verify(token, process.env.SECRET_KEY, (err, data) => {
     if (err) return res.sendStatus(403)
-    req.user = data;    
+    req.user = data;
     next();
   });
 };
@@ -30,12 +30,9 @@ const loginHandler = conn => async (req, res) => {
   const hashedPW = hash(password);
 
   if (!user || (hashedPW !== userPW)) return res.sendStatus(401);
-
   const payload = {email: email};
   const token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: '15m'});
   await addToken(conn, email, token);
-  // const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN);
-  // refreshTokens.push(refreshToken);
   res.json(token);
 };
 
