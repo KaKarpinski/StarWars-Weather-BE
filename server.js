@@ -8,6 +8,8 @@ import {createPool, getLastWeather, updateWeather} from './db.js';
 // use environment variables
 dotenv.config();
 
+const ONE_HOUR = 1000 * 60 * 60;
+
 const PORT = 7232;
 const app = express();
 
@@ -18,14 +20,14 @@ const conn = await dbPool.getConnection();
 setInterval(async () => {
   const weather = await fetchWeather();
   updateWeather(conn, weather);
-}, 1000 * 60 * 60);
+}, ONE_HOUR);
 
 app.use(express.json());
 app.use(express.static('public'))
 
-app.get('/weather', async (req, res) => {
+app.get('/weather', authMiddleware, async (req, res) => {
   const lastWeather = await getLastWeather(conn);
-  res.json(lastWeather);
+  res.json(lastWeather[0]);
 });
 
 app.get('/starwars/getall', getAllChars);
