@@ -28,7 +28,7 @@ const registerHandler = conn => async (req, res) => {
 const loginHandler = conn => async (req, res) => {
   const {email, password} = req.body;
   const user = await getUser(conn, email);
-  const userPW = user.password;
+  const userPW = user?.password;
   const hashedPW = hash(password);
 
   if (!user || (hashedPW !== userPW)) return res.sendStatus(401);
