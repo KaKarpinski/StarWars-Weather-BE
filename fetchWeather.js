@@ -1,12 +1,16 @@
 import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+import {updateWeather} from './db.js';
 
-const fetchWeather = async conn => {
-  // GLW localization
-  const lat = 50.2947533;
-  const long = 18.6711697;
-  const key = '86b77586951ac0c6fe742ae091109fe2';
+dotenv.config();
+
+// GLW localization
+const LAT = 50.2947533;
+const LONG = 18.6711697;
+
+const fetchWeather = async () => {
   const units = 'metric';
-  const url = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${key}&units=${units}`;
+  const url = `http://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LONG}&appid=${process.env.API_KEY}&units=${units}`;
   try {
     const res = await fetch(url);
     const data = await res.json();
@@ -16,4 +20,11 @@ const fetchWeather = async conn => {
   }
 };
 
-export default fetchWeather;
+const periodicallyCheckWeather = async (conn, period) => {
+  setInterval(async () => {
+    const weather = await fetchWeather();
+    updateWeather(conn, weather);
+  }, period);
+};
+
+export default periodicallyCheckWeather;

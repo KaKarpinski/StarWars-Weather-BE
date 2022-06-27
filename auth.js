@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import {createHash} from 'crypto';
-import {addUser, addToken, getUser} from './db.js';
+import {addToken, addUser, getUser} from './db.js';
+
+const EXPIRE_TIME = '15m';
 
 const hash = pw => createHash('sha256').update(pw).digest('hex');
 
@@ -31,7 +33,7 @@ const loginHandler = conn => async (req, res) => {
 
   if (!user || (hashedPW !== userPW)) return res.sendStatus(401);
   const payload = {email: email};
-  const token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: '15m'});
+  const token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: EXPIRE_TIME});
   await addToken(conn, email, token);
   res.json(token);
 };

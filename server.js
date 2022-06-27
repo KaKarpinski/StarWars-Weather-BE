@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import fetchWeather from './fetchWeather.js';
+import periodicallyCheckWeather from './fetchWeather.js';
 import {authMiddleware, loginHandler, registerHandler} from './auth.js';
 import {getAllChars, getFiltered} from './swapi.js';
-import {createPool, getLastWeather, updateWeather} from './db.js';
+import {createPool, getLastWeather} from './db.js';
 
 // use environment variables
 dotenv.config();
@@ -17,10 +17,7 @@ const app = express();
 const dbPool = await createPool();
 const conn = await dbPool.getConnection();
 
-setInterval(async () => {
-  const weather = await fetchWeather();
-  updateWeather(conn, weather);
-}, ONE_HOUR);
+periodicallyCheckWeather(conn, ONE_HOUR);
 
 app.use(express.json());
 app.use(express.static('public'))
